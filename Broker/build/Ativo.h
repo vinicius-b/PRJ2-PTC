@@ -23,19 +23,19 @@ extern "C" {
 #endif
 
 /* Dependencies */
-typedef enum msg_PR {
-	msg_PR_NOTHING,	/* No components present */
-	msg_PR_pub,
-	msg_PR_sub,
-	msg_PR_un,
-	msg_PR_noty
-} msg_PR;
+typedef enum id_PR {
+	id_PR_NOTHING,	/* No components present */
+	id_PR_pub,
+	id_PR_sub,
+	id_PR_un,
+	id_PR_noty
+} id_PR;
 
 /* Ativo */
 typedef struct Ativo {
-	struct msg {
-		msg_PR present;
-		union Ativo__msg_u {
+	struct id {
+		id_PR present;
+		union Ativo__id_u {
 			Publish_t	 pub;
 			Subscribe_t	 sub;
 			Unsubscribe_t	 un;
@@ -44,7 +44,7 @@ typedef struct Ativo {
 		
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
-	} msg;
+	} id;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;

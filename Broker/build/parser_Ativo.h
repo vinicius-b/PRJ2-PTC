@@ -488,57 +488,57 @@ class TNotify : public ASN1DataType<Notify_t> {
 
 class TAtivo : public ASN1DataType<Ativo_t> {
  public:
-  class Choice_msg {
+  class Choice_id {
    private:
-    typename Ativo_t::msg * ptr;
-    void check(msg_PR attr) {
-      if (ptr->present == msg_PR_NOTHING) ptr->present = attr;
+    typename Ativo_t::id * ptr;
+    void check(id_PR attr) {
+      if (ptr->present == id_PR_NOTHING) ptr->present = attr;
       if (ptr->present != attr) throw -1;
     }
    public:
-    Choice_msg(typename Ativo_t::msg & rec) : ptr(&rec) {
+    Choice_id(typename Ativo_t::id & rec) : ptr(&rec) {
     }
-    Choice_msg(typename Ativo_t::msg & rec, bool reset) : ptr(&rec) {
-      if (reset) ptr->present = msg_PR_NOTHING;
+    Choice_id(typename Ativo_t::id & rec, bool reset) : ptr(&rec) {
+      if (reset) ptr->present = id_PR_NOTHING;
     }
-    ~Choice_msg() {}
-    msg_PR get_choice() { return ptr->present;}
-    void set_sub() { ptr->present = msg_PR_sub; }
+    ~Choice_id() {}
+    id_PR get_choice() { return ptr->present;}
+    void set_sub() { ptr->present = id_PR_sub; }
     void set_sub(const TSubscribe & arg) {
-      ptr->present = msg_PR_sub;
+      ptr->present = id_PR_sub;
     }
     TSubscribe get_sub() {
-      check(msg_PR_sub);
+      check(id_PR_sub);
       TSubscribe pld(&ptr->choice.sub);
       pld.set_destroy(false);
       return pld;
     }
-    void set_noty() { ptr->present = msg_PR_noty; }
+    void set_noty() { ptr->present = id_PR_noty; }
     void set_noty(const TNotify & arg) {
-      ptr->present = msg_PR_noty;
+      ptr->present = id_PR_noty;
     }
     TNotify get_noty() {
-      check(msg_PR_noty);
+      check(id_PR_noty);
       TNotify pld(&ptr->choice.noty);
       pld.set_destroy(false);
       return pld;
     }
-    void set_pub() { ptr->present = msg_PR_pub; }
+    void set_pub() { ptr->present = id_PR_pub; }
     void set_pub(const TPublish & arg) {
-      ptr->present = msg_PR_pub;
+      ptr->present = id_PR_pub;
     }
     TPublish get_pub() {
-      check(msg_PR_pub);
+      check(id_PR_pub);
       TPublish pld(&ptr->choice.pub);
       pld.set_destroy(false);
       return pld;
     }
-    void set_un() { ptr->present = msg_PR_un; }
+    void set_un() { ptr->present = id_PR_un; }
     void set_un(const TUnsubscribe & arg) {
-      ptr->present = msg_PR_un;
+      ptr->present = id_PR_un;
     }
     TUnsubscribe get_un() {
-      check(msg_PR_un);
+      check(id_PR_un);
       TUnsubscribe pld(&ptr->choice.un);
       pld.set_destroy(false);
       return pld;
@@ -546,7 +546,7 @@ class TAtivo : public ASN1DataType<Ativo_t> {
   };
 
  private:
-  Choice_msg * m_msg;
+  Choice_id * m_id;
  public:
   TAtivo() : ASN1DataType<Ativo_t>(&asn_DEF_Ativo) {
     init();
@@ -560,21 +560,21 @@ class TAtivo : public ASN1DataType<Ativo_t> {
     destroy = false;
   }
   void init() {
-    m_msg = new Choice_msg(pkt->msg, destroy);
+    m_id = new Choice_id(pkt->id, destroy);
   }
   virtual ~TAtivo() {
-    delete m_msg;
+    delete m_id;
   }
   TAtivo & operator=(const TAtivo & o) {
     if (destroy) delete pkt;
     pkt = o.pkt;
     DESC = o.DESC;
-    delete m_msg;
+    delete m_id;
     init();
     destroy = false;
     return *this;
 }
-  Choice_msg & get_msg() { return *m_msg;}
+  Choice_id & get_id() { return *m_id;}
   class DerSerializer : public DERSerializer<Ativo_t> {
   public:
     DerSerializer(ostream & out) : DERSerializer<Ativo_t>(&asn_DEF_Ativo, out) {}
