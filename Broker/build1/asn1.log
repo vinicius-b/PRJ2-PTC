@@ -1,0 +1,72 @@
+Compiled IntList.c
+Compiled IntList.h
+Compiled BoolList.c
+Compiled BoolList.h
+Compiled Tipo1.c
+Compiled Tipo1.h
+Compiled Tipo2.c
+Compiled Tipo2.h
+Compiled Ativo.c
+Compiled Ativo.h
+Copied /usr/local/share/asn1c/BOOLEAN.h	-> BOOLEAN.h
+Copied /usr/local/share/asn1c/BOOLEAN.c	-> BOOLEAN.c
+Copied /usr/local/share/asn1c/INTEGER.h	-> INTEGER.h
+Copied /usr/local/share/asn1c/NativeEnumerated.h	-> NativeEnumerated.h
+Copied /usr/local/share/asn1c/INTEGER.c	-> INTEGER.c
+Copied /usr/local/share/asn1c/NativeEnumerated.c	-> NativeEnumerated.c
+Copied /usr/local/share/asn1c/NativeInteger.h	-> NativeInteger.h
+Copied /usr/local/share/asn1c/NativeInteger.c	-> NativeInteger.c
+Copied /usr/local/share/asn1c/NumericString.h	-> NumericString.h
+Copied /usr/local/share/asn1c/NumericString.c	-> NumericString.c
+Copied /usr/local/share/asn1c/PrintableString.h	-> PrintableString.h
+Copied /usr/local/share/asn1c/PrintableString.c	-> PrintableString.c
+Copied /usr/local/share/asn1c/asn_SEQUENCE_OF.h	-> asn_SEQUENCE_OF.h
+Copied /usr/local/share/asn1c/asn_SEQUENCE_OF.c	-> asn_SEQUENCE_OF.c
+Copied /usr/local/share/asn1c/asn_SET_OF.h	-> asn_SET_OF.h
+Copied /usr/local/share/asn1c/asn_SET_OF.c	-> asn_SET_OF.c
+Copied /usr/local/share/asn1c/constr_CHOICE.h	-> constr_CHOICE.h
+Copied /usr/local/share/asn1c/constr_CHOICE.c	-> constr_CHOICE.c
+Copied /usr/local/share/asn1c/constr_SEQUENCE.h	-> constr_SEQUENCE.h
+Copied /usr/local/share/asn1c/constr_SEQUENCE.c	-> constr_SEQUENCE.c
+Copied /usr/local/share/asn1c/constr_SEQUENCE_OF.h	-> constr_SEQUENCE_OF.h
+Copied /usr/local/share/asn1c/constr_SEQUENCE_OF.c	-> constr_SEQUENCE_OF.c
+Copied /usr/local/share/asn1c/constr_SET_OF.h	-> constr_SET_OF.h
+Copied /usr/local/share/asn1c/constr_SET_OF.c	-> constr_SET_OF.c
+Copied /usr/local/share/asn1c/asn_application.h	-> asn_application.h
+Copied /usr/local/share/asn1c/asn_system.h	-> asn_system.h
+Copied /usr/local/share/asn1c/asn_codecs.h	-> asn_codecs.h
+Copied /usr/local/share/asn1c/asn_internal.h	-> asn_internal.h
+Copied /usr/local/share/asn1c/OCTET_STRING.h	-> OCTET_STRING.h
+Copied /usr/local/share/asn1c/OCTET_STRING.c	-> OCTET_STRING.c
+Copied /usr/local/share/asn1c/BIT_STRING.h	-> BIT_STRING.h
+Copied /usr/local/share/asn1c/BIT_STRING.c	-> BIT_STRING.c
+Copied /usr/local/share/asn1c/asn_codecs_prim.c	-> asn_codecs_prim.c
+Copied /usr/local/share/asn1c/asn_codecs_prim.h	-> asn_codecs_prim.h
+Copied /usr/local/share/asn1c/ber_tlv_length.h	-> ber_tlv_length.h
+Copied /usr/local/share/asn1c/ber_tlv_length.c	-> ber_tlv_length.c
+Copied /usr/local/share/asn1c/ber_tlv_tag.h	-> ber_tlv_tag.h
+Copied /usr/local/share/asn1c/ber_tlv_tag.c	-> ber_tlv_tag.c
+Copied /usr/local/share/asn1c/ber_decoder.h	-> ber_decoder.h
+Copied /usr/local/share/asn1c/ber_decoder.c	-> ber_decoder.c
+Copied /usr/local/share/asn1c/der_encoder.h	-> der_encoder.h
+Copied /usr/local/share/asn1c/der_encoder.c	-> der_encoder.c
+Copied /usr/local/share/asn1c/constr_TYPE.h	-> constr_TYPE.h
+Copied /usr/local/share/asn1c/constr_TYPE.c	-> constr_TYPE.c
+Copied /usr/local/share/asn1c/constraints.h	-> constraints.h
+Copied /usr/local/share/asn1c/constraints.c	-> constraints.c
+Copied /usr/local/share/asn1c/xer_support.h	-> xer_support.h
+Copied /usr/local/share/asn1c/xer_support.c	-> xer_support.c
+Copied /usr/local/share/asn1c/xer_decoder.h	-> xer_decoder.h
+Copied /usr/local/share/asn1c/xer_decoder.c	-> xer_decoder.c
+Copied /usr/local/share/asn1c/xer_encoder.h	-> xer_encoder.h
+Copied /usr/local/share/asn1c/xer_encoder.c	-> xer_encoder.c
+Copied /usr/local/share/asn1c/per_support.h	-> per_support.h
+Copied /usr/local/share/asn1c/per_support.c	-> per_support.c
+Copied /usr/local/share/asn1c/per_decoder.h	-> per_decoder.h
+Copied /usr/local/share/asn1c/per_decoder.c	-> per_decoder.c
+Copied /usr/local/share/asn1c/per_encoder.h	-> per_encoder.h
+Copied /usr/local/share/asn1c/per_encoder.c	-> per_encoder.c
+Copied /usr/local/share/asn1c/per_opentype.h	-> per_opentype.h
+Copied /usr/local/share/asn1c/per_opentype.c	-> per_opentype.c
+Copied /usr/local/share/asn1c/converter-sample.c	-> converter-sample.c
+Generated Makefile.am.sample

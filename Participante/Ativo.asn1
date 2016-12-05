@@ -1,0 +1,36 @@
+Ativo DEFINITIONS AUTOMATIC TAGS ::=
+BEGIN
+
+Publish ::= SEQUENCE {
+	subject OBJECT IDENTIFIER,
+	value BOOLEAN
+}
+
+Subscribe ::= SEQUENCE {
+	subject OBJECT IDENTIFIER
+}
+
+Unsubscribe ::= SEQUENCE {
+	subject OBJECT IDENTIFIER
+}
+
+Notify ::= SEQUENCE {
+	subject OBJECT IDENTIFIER,
+	value BOOLEAN
+}
+
+ACKsubs ::= SEQUENCE {
+	subject OBJECT IDENTIFIER,
+	value BOOLEAN
+}
+
+Ativo ::= SEQUENCE {
+  id CHOICE {
+  	pub Publish,
+	sub Subscribe,
+	un Unsubscribe,
+	noty Notify 
+  }
+}
+
+END
