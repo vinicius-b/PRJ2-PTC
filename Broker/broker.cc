@@ -73,6 +73,9 @@ int main() {
 #include <sstream>
 #include "TCPBaseSocket.h"
 #include <cstdlib>
+#include <string.h>
+#include <stdio.h>
+#include <string>
 
 using namespace std;
 /*
@@ -83,7 +86,7 @@ int main(int argc, char** argv) {
 
     // cria um socket servidor que recebe conexões no port 8000
     TCPServerSocket server(8000);
-    
+    long int vect[4];
     // fica eternamente recebendo novas conexões
     // e dados de conexões existentes
     while (true) {
@@ -117,12 +120,26 @@ int main(int argc, char** argv) {
                 cout << "recebeu de " << addr << ':' << port;
                 //cout << ": " << data << endl;
                 TAtivo * other = decoder.deserialize();
+				
+                TAtivo::Choice_id & id = other->get_id();
+  				TSubscribe subs = id.get_sub();
 
-      			cout << endl;
+      			ASN1Oid msg_vect = subs.get_subject_attr();
+
+      			//string * pkt = strtok(msg_vect,".");
+				cout << endl;
 
 			  if (other) {
 				cout << "Estrutura de dados obtida da decodificação DER:" << endl;
 				other->show();
+				int i = 0;
+				for (ASN1Oid::iterator it = msg_vect.begin(); it != msg_vect.end(); it++ , i++) {
+					vect[i] = *it;
+					cout << vect[i] << endl;
+				}
+
+
+			//	cout << msg_vect << endl;
 				delete other;
 				
 			  } 
