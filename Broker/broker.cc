@@ -173,6 +173,6 @@ int main(int argc, char** argv) {
 	broker b;
 	ASN1Oid sub;
 	b.connection(server);
-
+    b.notify(sub, server, false);
     return 0;
 }
