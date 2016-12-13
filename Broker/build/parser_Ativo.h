@@ -574,6 +574,8 @@ class TAtivo : public ASN1DataType<Ativo_t> {
     destroy = false;
     return *this;
 }
+  long get_cod() { return pkt->cod;}
+  void set_cod(long arg) { pkt->cod = arg;}
   Choice_id & get_id() { return *m_id;}
   class DerSerializer : public DERSerializer<Ativo_t> {
   public:

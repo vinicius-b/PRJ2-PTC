@@ -12,13 +12,13 @@ class part{
 	public:
 		part();
 		virtual ~part();
-		void subscribe();
+		void subscribe(string subject);
 		void unsubscribe();
 		void publish();
 		void connect(TCPClientSocket c, string conteudo);
 
 	private:
-
+		bool state;
 };
 
 

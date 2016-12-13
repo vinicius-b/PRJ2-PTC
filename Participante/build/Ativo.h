@@ -11,6 +11,7 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
+#include <NativeInteger.h>
 #include "Publish.h"
 #include "Subscribe.h"
 #include "Unsubscribe.h"
@@ -45,6 +46,7 @@ typedef struct Ativo {
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
 	} id;
+	long	 cod;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;

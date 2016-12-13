@@ -30,7 +30,8 @@ Ativo ::= SEQUENCE {
 	sub Subscribe,
 	un Unsubscribe,
 	noty Notify 
-  }
+  },
+  cod INTEGER
 }
 
 END
