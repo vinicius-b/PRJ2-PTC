@@ -16,6 +16,7 @@
 #include "Subscribe.h"
 #include "Unsubscribe.h"
 #include "Notify.h"
+#include "ACKsubs.h"
 #include <constr_CHOICE.h>
 #include <constr_SEQUENCE.h>
 
@@ -29,7 +30,8 @@ typedef enum id_PR {
 	id_PR_pub,
 	id_PR_sub,
 	id_PR_un,
-	id_PR_noty
+	id_PR_noty,
+	id_PR_ack
 } id_PR;
 
 /* Ativo */
@@ -41,6 +43,7 @@ typedef struct Ativo {
 			Subscribe_t	 sub;
 			Unsubscribe_t	 un;
 			Notify_t	 noty;
+			ACKsubs_t	 ack;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */

@@ -16,12 +16,13 @@ Unsubscribe ::= SEQUENCE {
 
 Notify ::= SEQUENCE {
 	subject OBJECT IDENTIFIER,
-	value BOOLEAN
+	value BOOLEAN,
+	ip PrintableString(SIZE(1..256))
 }
 
 ACKsubs ::= SEQUENCE {
 	subject OBJECT IDENTIFIER,
-	value BOOLEAN
+	value PrintableString(SIZE(1..256))
 }
 
 Ativo ::= SEQUENCE {
@@ -29,7 +30,8 @@ Ativo ::= SEQUENCE {
   	pub Publish,
 	sub Subscribe,
 	un Unsubscribe,
-	noty Notify 
+	noty Notify,
+	ack ACKsubs 
   },
   cod INTEGER
 }

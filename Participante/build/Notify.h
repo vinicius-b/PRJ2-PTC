@@ -13,6 +13,7 @@
 /* Including external dependencies */
 #include <OBJECT_IDENTIFIER.h>
 #include <BOOLEAN.h>
+#include <PrintableString.h>
 #include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
@@ -23,6 +24,7 @@ extern "C" {
 typedef struct Notify {
 	OBJECT_IDENTIFIER_t	 subject;
 	BOOLEAN_t	 value;
+	PrintableString_t	 ip;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;

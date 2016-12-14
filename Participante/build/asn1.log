@@ -21,6 +21,8 @@ Copied /usr/local/share/asn1c/NativeInteger.h	-> NativeInteger.h
 Copied /usr/local/share/asn1c/NativeInteger.c	-> NativeInteger.c
 Copied /usr/local/share/asn1c/OBJECT_IDENTIFIER.h	-> OBJECT_IDENTIFIER.h
 Copied /usr/local/share/asn1c/OBJECT_IDENTIFIER.c	-> OBJECT_IDENTIFIER.c
+Copied /usr/local/share/asn1c/PrintableString.h	-> PrintableString.h
+Copied /usr/local/share/asn1c/PrintableString.c	-> PrintableString.c
 Copied /usr/local/share/asn1c/constr_CHOICE.h	-> constr_CHOICE.h
 Copied /usr/local/share/asn1c/constr_CHOICE.c	-> constr_CHOICE.c
 Copied /usr/local/share/asn1c/constr_SEQUENCE.h	-> constr_SEQUENCE.h

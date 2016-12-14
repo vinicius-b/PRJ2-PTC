@@ -8,171 +8,231 @@
 #include <string>
 #include "broker.h"
 using namespace std;
-/*
- * 
- */
 
-void broker::notify(ASN1Oid sub, TCPServerSocket server, bool state){
+broker::broker(){
+	sub[0].insert_sub("1.12.3.4");
+	sub[1].insert_sub("1.12.3.5");
+	sub[2].insert_sub("1.10.3.4");
+	sub[3].insert_sub("1.10.3.5");
+	sub[4].insert_sub("1.11.3.4");
+
+	nSubs = 5;
+}
+
+broker::~broker(){}
+
+void broker::ack_subs(string subj, string addr, Connection * c, int port){
 	TAtivo pkt;
 	string conteudo;
-	  // definindo os valores de varios campos
 	TAtivo::Choice_id & id = pkt.get_id();
-	TNotify noty = id.get_noty();
-	pkt.set_cod(4);
-	noty.set_subject("1.12.3.4");
-	noty.set_value(state);
-
-	// verifica se os valores contidos na estrutura de dados respeitam
-	// a especificação
+	TACKsubs ack = id.get_ack();
+	pkt.set_cod(5);
+	ack.set_subject(subj);
+	ack.set_value("Permissão negada.");
 	pkt.check_constraints();
 
-	// mostra a estrutura de dados na tela
 	cout << "Estrutura de dados em memória (antes de codificação DER):" << endl;
 	pkt.show();
 
-	// cria o codificador
 	ostringstream out;
 	TAtivo::DerSerializer encoder(out);
 	encoder.serialize(pkt);
 	conteudo = out.str();
-	server.send(conteudo);
-}
-
-void broker::insert_list(ASN1Oid oid){
-	list<ASN1Oid>::iterator it=assunto.begin();
-	if(assunto.empty()){
-		assunto.insert(it,oid);
-	}else{
-		it++;
-		assunto.insert(it,oid);
-	}
-//	assunto.push_back(oid);
-	long int vect[4];
-	int i = 0;
-	for (list<ASN1Oid>::iterator it=assunto.begin(); it != assunto.end(); it++){
-		ASN1Oid sub = *it;
-		for (ASN1Oid::iterator it_1 = sub.begin(); it_1 != sub.end(); it_1++ , i++) {
-			vect[i] = *it_1;
-			cout << vect[i] << '.';
+	try{
+		cout << "ACKSubs: " << c->send(conteudo) << " bytes de " << conteudo.size() << endl;
+		}catch (TCPServerSocket::DisconnectedException e) {
+			cout << e.what() << ": " << e.get_addr() << ':';
+			cout << e.get_port()<< endl;
 		}
-		cout << endl;
+}
+
+void broker::notify(string ip, bool state, string subj, int port, Connection * sock){
+	TAtivo pkt;
+	string conteudo;
+	TAtivo::Choice_id & id = pkt.get_id();
+	TNotify noty = id.get_noty();
+	pkt.set_cod(4);
+	noty.set_subject(subj);
+	noty.set_value(state);
+	noty.set_ip(ip);
+
+	pkt.check_constraints();
+
+	cout << "Estrutura de dados em memória (antes de codificação DER):" << endl;
+	pkt.show();
+
+	ostringstream out;
+	TAtivo::DerSerializer encoder(out);
+	encoder.serialize(pkt);
+	conteudo = out.str();
+	try{
+		cout << "Notify: " << sock->send(conteudo) << " bytes de " << conteudo.size() << endl;
+
+	        //cout << "Data: " << sockNotify.send(data) << " bytes de " << data.size() << endl;
+	    }catch (TCPServerSocket::DisconnectedException e) {
+	        cout << e.what() << ": " << e.get_addr() << ':';
+	        cout << e.get_port()<< endl;
+	    }
+
+}
+
+void broker::insert_list(string oid, string addr, int port, Connection * con){
+	int i = 0;
+	for (i; i < nSubs ; i++){
+		if(sub[i].return_sub() == oid){
+			cout << "Participante cadastrado" << endl;
+			sub[i].IP.insert(sub[i].IP.end(),addr);
+			sub[i].port.insert(sub[i].port.end(),port);
+			sub[i].c.insert(sub[i].c.end(),con);
+			return;
+		}
 	}
-
-
-	  std::cout << '\n';
+	cout << "Assunto inválido" << endl;
+	return;
 }
 
-void broker::remove(ASN1Oid oid){
-//	for (ASN1Oid::iterator it = assunto.begin(); it != assunto.end(); it++) {
-//		if(it == oid){
-//			assunto.erase(it);
-//		}
-//	}
+void broker::publish(string subj, string addr, bool val, Connection * c, int port){
+	int i = 0;
+	bool ip_found = false;
+	for(i; i < nSubs; i++){
+		if(sub[i].return_sub() == subj){
+			int ip_len = sub[i].IP.size();
+			for(int j = 0; j < ip_len; j++){
+				if (sub[i].IP[j] == addr){
+					ip_found = true;
+					break;
+				}
+			}
+			if(ip_found == true){
+				for(int j = 0; j < ip_len; j++){
+					notify(sub[i].IP[j], val, subj, sub[i].port[j], sub[i].c[j]);
+				}
+			}else{
+				ack_subs(subj, addr, c, port);
+				return;
+			}
+
+		}
+	}
+	return;
+}
+void broker::remove(string oid, string addr, int port, Connection * con){
+	int i = 0;
+		for (i; i < nSubs ; i++){
+			if(sub[i].return_sub() == oid){
+				int ip_len = sub[i].IP.size();
+				for(int j = 0; j < ip_len; j++){
+					if(sub[i].IP[j] == addr){
+						sub[i].IP[j].erase(sub[i].IP[j].begin()+j);
+					}
+				}
+			}
+		}
+	return;
 }
 
-broker::broker(){}
 
-broker::~broker(){}
 
-void broker::connection(TCPServerSocket server){
-//	TCPServerSocket server(8000);
-	
-
-	long int vect[4];
-	// fica eternamente recebendo novas conexões
-	// e dados de conexões existentes
-	while (true) {
+void broker::connection(TCPServerSocket * server){
+	stringstream inp;
+	TAtivo::DerDeserializer decoder(inp);
+	while(true){
 		try {
-			stringstream inp;
-			TAtivo::DerDeserializer decoder(inp);
-			// aguarda uma nova conexão ou dados em
-			//uma conexão existente
-			Connection & sock = server.wait(0);
-
+			Connection & sock = server->wait(0);
 			string addr;
 			unsigned short port;
 
-			// obtém o IP e port do socket da outra ponta da
-			// conexão
 			sock.get_peer(addr, port);
-
+			string data = sock.recv(1024);
 			if (sock.isNew()) {
-				// caso contrário, deve ser uma  nova conexão
 				cout << "Nova conexão: " << addr << ':' << port << endl;
 			} else {
-			  // tenta receber até 1024 bytes no socket retornado
-			  // por "wait"
-				string data = sock.recv(1024);
-				inp.write(data.c_str(), data.size());
 
-			  // conseguiu ler algo desse socket ...
 			  if (data.size()) {
-				// ...mostra-os na tela e envia-os de volta
-				// para a outra ponta da conexão
+				inp.write(data.c_str(), data.size());
 				cout << "recebeu de " << addr << ':' << port;
-				//cout << ": " << data << endl;
 				TAtivo * other = decoder.deserialize();
-
 				TAtivo::Choice_id & id = other->get_id();
-				//
-
-
-
-				//string * pkt = strtok(msg_vect,".");
 				cout << endl;
-
-			  if (other) {
-				if(other->get_cod() == 1){
+				//other->show();
+			  	if(other->get_cod() == 1){
 					TSubscribe subs = id.get_sub();
-					cout << "Estrutura de dados obtida da decodificação DER:" << endl;
+					cout << "Mensagem subscribe" << endl;
 					other->show();
-					ASN1Oid msg_vect = subs.get_subject_attr();
-					insert_list(msg_vect);
-				}
-				if(other->get_cod() == 2){
+					string msg_vect = subs.get_subject();
+					insert_list(msg_vect, addr, port, &sock);
+
+				}else if(other->get_cod() == 2){
 					TPublish pub = id.get_pub();
-					cout << "Estrutura de dados obtida da decodificação DER:" << endl;
+					cout << "Mensagem publish" << endl;
 					other->show();
-				}
-				if(other->get_cod() == 3){
+					bool val = pub.get_value();
+					string sub = pub.get_subject();
+					publish(sub,addr,val, &sock, port);
+				}else if(other->get_cod() == 3){
 					TUnsubscribe un = id.get_un();
+					cout << "Mensagem Unsubscribe" << endl;
+					other->show();
+					string msg_vect = un.get_subject();
+					remove(msg_vect, addr, port, &sock);
+				}
+				if (other) {
 					cout << "Estrutura de dados obtida da decodificação DER:" << endl;
 					other->show();
-					//remove();
 				}
-				
-				//int i = 0;
-				//for (ASN1Oid::iterator it = msg_vect.begin(); it != msg_vect.end(); it++ , i++) {
-					//vect[i] = *it;
-				//	cout << vect[i] << endl;
-				//}
-
-
-			//	cout << msg_vect << endl;
 				delete other;
-
-			  }
 
 			  }
 
 			}
 
 		} catch (TCPServerSocket::DisconnectedException e) {
-			// esta exceção informa que uma conexão foi encerrada
-			// o socket correspondente foi invalidado automaticamente
 			cout << e.what() << ": " << e.get_addr() << ':';
 			cout << e.get_port()<< endl;
-
 		}
+		return;
 	}
-
 }
+
 
 int main(int argc, char** argv) {
 	TCPServerSocket server(8000);
 	broker b;
-	ASN1Oid sub;
-	b.connection(server);
-    b.notify(sub, server, false);
+
+	int sock_fd = server.get_descriptor();
+	int sock_ant = 0;
+
+	int desc_maior = sock_fd;
+
+	while(1){
+		fd_set r;
+		FD_ZERO(&r);
+		FD_SET(sock_fd, &r);
+		FD_SET(sock_ant, &r);
+		int  i = 0;
+
+		if(!(i = select(desc_maior+1,&r,0,0,0)) == 0){
+			cout << "Há " << i << " descritores prontos" << endl;
+			if(i < 0){
+				perror("select()");
+			}else if(i){
+				if(FD_ISSET(sock_fd, &r)){
+					cout << "New connection" << endl;
+					Connection & s = server.wait(0);
+					sock_ant  = s.get_descriptor();
+					if(sock_ant > sock_fd){
+						desc_maior = sock_ant;
+					}else{
+						desc_maior = sock_fd;
+					}
+					b.connection(&server);
+				}if(FD_ISSET(sock_ant, &r)){
+					cout << "Old connection" << endl;
+					Connection & s = server.wait(0);
+					b.connection(&server);
+				}
+			}
+		}
+	}
     return 0;
 }

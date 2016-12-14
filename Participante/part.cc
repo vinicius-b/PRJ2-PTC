@@ -3,107 +3,130 @@
 #include <sstream>
 #include "TCPBaseSocket.h"
 #include "part.h"
-
+#include <cstdlib>
+#include <string.h>
+#include <stdio.h>
+#include <string>
 using namespace std;
 
 part::part(){
 	state = false;
-}
-
-part::~part(){}
-
-void part::connect(TCPClientSocket c, string conteudo){
+	oid = "1.12.3.4";
 	c.connect("localhost", 8000);
-	  // codifica a estrutura de dados
-	 // string conteudo = out.str();
-	cout << "Enviou: " << c.send(conteudo) << " bytes de " << conteudo.size() << endl;
-
-	sleep(1);
 }
+
+part::~part(){
+
+}
+void part::report(){
+
+}
+
+void part::receive(){
+
+}
+
+
 void part::publish(){
-	TCPClientSocket sock;
 	TAtivo pkt;
 	string conteudo;
-	  // definindo os valores de varios campos
 	TAtivo::Choice_id & id = pkt.get_id();
 	TPublish pub = id.get_pub();
 	pkt.set_cod(2);
-	pub.set_subject("1.12.3.4");
+	pub.set_subject(oid);
 	pub.set_value(state);
 
-	// verifica se os valores contidos na estrutura de dados respeitam
-	// a especificação
 	pkt.check_constraints();
 
-	// mostra a estrutura de dados na tela
 	cout << "Estrutura de dados em memória (antes de codificação DER):" << endl;
 	pkt.show();
 
-	// cria o codificador
 	ostringstream out;
 	TAtivo::DerSerializer encoder(out);
 	encoder.serialize(pkt);
 	conteudo = out.str();
-	this->connect(sock, conteudo);
-	//sock.close();
+	cout << "Enviou: " << c.send(conteudo) << " bytes de " << conteudo.size() << endl;
+	while(true){
+		try{
+			string data;
+			data = c.recv(1024);
+			stringstream inp;
+			TAtivo::DerDeserializer decoder(inp);
+			inp.write(data.c_str(), data.size());
+			TAtivo * other = decoder.deserialize();
+			TAtivo::Choice_id & id = other->get_id();
+			TNotify noty = id.get_noty();
+			string subject = noty.get_subject();
+			string ip = noty.get_ip();
+			bool val = noty.get_value();
+			cout << "Notify recebido" << endl;
+			cout << "Sensor publicador: " << ip << endl;
+			cout << "Valor do sensor: " << val << endl;
+		}catch(TCPServerSocket::DisconnectedException e){
+			cout << e.what() << ": " << e.get_addr() << ':';
+			cout << e.get_port()<< endl;
+		}
+		return;
+	}
 }
 void part::subscribe(string subject){
-	TCPClientSocket sock;
 	TAtivo pkt;
 	string conteudo;
-	  // definindo os valores de varios campos
 	TAtivo::Choice_id & id = pkt.get_id();
 	TSubscribe subs = id.get_sub();
 	pkt.set_cod(1);
 	subs.set_subject(subject);
-
-	// verifica se os valores contidos na estrutura de dados respeitam
-	// a especificação
 	pkt.check_constraints();
 
-	// mostra a estrutura de dados na tela
 	cout << "Estrutura de dados em memória (antes de codificação DER):" << endl;
 	pkt.show();
 
-	// cria o codificador
 	ostringstream out;
 	TAtivo::DerSerializer encoder(out);
 	encoder.serialize(pkt);
 	conteudo = out.str();
-	this->connect(sock, conteudo);
-	//sock.close();
+	cout << "Enviou: " << c.send(conteudo) << " bytes de " << conteudo.size() << endl;
+
 }
 void part::unsubscribe(){
-	TCPClientSocket sock;
 	TAtivo pkt;
 	string conteudo;
-	  // definindo os valores de varios campos
 	TAtivo::Choice_id & id = pkt.get_id();
 	TUnsubscribe un = id.get_un();
 	pkt.set_cod(3);
-	un.set_subject("1.12.3.4");
+	un.set_subject(oid);
 
-	// verifica se os valores contidos na estrutura de dados respeitam
-	// a especificação
 	pkt.check_constraints();
 
-	// mostra a estrutura de dados na tela
 	cout << "Estrutura de dados em memória (antes de codificação DER):" << endl;
 	pkt.show();
 
-	// cria o codificador
 	ostringstream out;
 	TAtivo::DerSerializer encoder(out);
 	encoder.serialize(pkt);
 	conteudo = out.str();
-	this->connect(sock, conteudo);
+	cout << "Enviou: " << c.send(conteudo) << " bytes de " << conteudo.size() << endl;
 }
-
+void part::init(){;
+	int op;
+	cout << "Digite 1 para subscribe" << endl;
+	cout << "Digite 2 para publish" << endl;
+	cout << "Digite 3 para unsubscribe" << endl;
+	cout << "Escolha operação: ";
+	cin >> op;
+	if (op == 1)
+		subscribe(oid);
+	if (op == 2)
+		publish();
+	if (op == 3)
+		unsubscribe();
+}
 int main() {
 	part p;
-	p.subscribe("1.12.3.4");
-	p.publish();
-	p.unsubscribe();
+
+	while(1){
+		p.init();
+	}
 	return 0;
 }
 

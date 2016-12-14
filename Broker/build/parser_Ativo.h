@@ -297,6 +297,7 @@ class TUnsubscribe : public ASN1DataType<Unsubscribe_t> {
 class TACKsubs : public ASN1DataType<ACKsubs_t> {
  public:
  private:
+  ASN1String * m_value;
   ASN1Oid * m_subject;
  public:
   TACKsubs() : ASN1DataType<ACKsubs_t>(&asn_DEF_ACKsubs) {
@@ -311,22 +312,25 @@ class TACKsubs : public ASN1DataType<ACKsubs_t> {
     destroy = false;
   }
   void init() {
+    m_value = new ASN1String(pkt->value);
     m_subject = new ASN1Oid(pkt->subject);
   }
   virtual ~TACKsubs() {
+    delete m_value;
     delete m_subject;
   }
   TACKsubs & operator=(const TACKsubs & o) {
     if (destroy) delete pkt;
     pkt = o.pkt;
     DESC = o.DESC;
+    delete m_value;
     delete m_subject;
     init();
     destroy = false;
     return *this;
 }
-  bool get_value() { return pkt->value;}
-  void set_value(bool arg) { pkt->value = arg;}
+  string get_value() { return m_value->str();}
+  void set_value(const string & arg) { *m_value = arg;}
   ASN1Oid & get_subject_attr() { return *m_subject;}
   string get_subject() { return m_subject->str();}
   void set_subject(const string & arg) { *m_subject = arg;}
@@ -393,6 +397,7 @@ class TACKsubs : public ASN1DataType<ACKsubs_t> {
 class TNotify : public ASN1DataType<Notify_t> {
  public:
  private:
+  ASN1String * m_ip;
   ASN1Oid * m_subject;
  public:
   TNotify() : ASN1DataType<Notify_t>(&asn_DEF_Notify) {
@@ -407,20 +412,25 @@ class TNotify : public ASN1DataType<Notify_t> {
     destroy = false;
   }
   void init() {
+    m_ip = new ASN1String(pkt->ip);
     m_subject = new ASN1Oid(pkt->subject);
   }
   virtual ~TNotify() {
+    delete m_ip;
     delete m_subject;
   }
   TNotify & operator=(const TNotify & o) {
     if (destroy) delete pkt;
     pkt = o.pkt;
     DESC = o.DESC;
+    delete m_ip;
     delete m_subject;
     init();
     destroy = false;
     return *this;
 }
+  string get_ip() { return m_ip->str();}
+  void set_ip(const string & arg) { *m_ip = arg;}
   bool get_value() { return pkt->value;}
   void set_value(bool arg) { pkt->value = arg;}
   ASN1Oid & get_subject_attr() { return *m_subject;}
@@ -510,6 +520,16 @@ class TAtivo : public ASN1DataType<Ativo_t> {
     TSubscribe get_sub() {
       check(id_PR_sub);
       TSubscribe pld(&ptr->choice.sub);
+      pld.set_destroy(false);
+      return pld;
+    }
+    void set_ack() { ptr->present = id_PR_ack; }
+    void set_ack(const TACKsubs & arg) {
+      ptr->present = id_PR_ack;
+    }
+    TACKsubs get_ack() {
+      check(id_PR_ack);
+      TACKsubs pld(&ptr->choice.ack);
       pld.set_destroy(false);
       return pld;
     }

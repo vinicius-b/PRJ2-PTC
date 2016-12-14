@@ -15,10 +15,14 @@ class part{
 		void subscribe(string subject);
 		void unsubscribe();
 		void publish();
-		void connect(TCPClientSocket c, string conteudo);
-
+		void init();
+		void receive();
+		void notify();
+		void report();
 	private:
 		bool state;
+		string oid;
+		TCPClientSocket c;
 };
 
 

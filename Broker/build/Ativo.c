@@ -43,12 +43,22 @@ static asn_TYPE_member_t asn_MBR_id_2[] = {
 		0,
 		"noty"
 		},
+	{ ATF_NOFLAGS, 0, offsetof(struct id, choice.ack),
+		(ASN_TAG_CLASS_CONTEXT | (4 << 2)),
+		-1,	/* IMPLICIT tag at current level */
+		&asn_DEF_ACKsubs,
+		0,	/* Defer constraints checking to the member type */
+		0,	/* PER is not compiled, use -gen-PER */
+		0,
+		"ack"
+		},
 };
 static asn_TYPE_tag2member_t asn_MAP_id_tag2el_2[] = {
     { (ASN_TAG_CLASS_CONTEXT | (0 << 2)), 0, 0, 0 }, /* pub */
     { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 }, /* sub */
     { (ASN_TAG_CLASS_CONTEXT | (2 << 2)), 2, 0, 0 }, /* un */
-    { (ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0 } /* noty */
+    { (ASN_TAG_CLASS_CONTEXT | (3 << 2)), 3, 0, 0 }, /* noty */
+    { (ASN_TAG_CLASS_CONTEXT | (4 << 2)), 4, 0, 0 } /* ack */
 };
 static asn_CHOICE_specifics_t asn_SPC_id_specs_2 = {
 	sizeof(struct id),
@@ -56,7 +66,7 @@ static asn_CHOICE_specifics_t asn_SPC_id_specs_2 = {
 	offsetof(struct id, present),
 	sizeof(((struct id *)0)->present),
 	asn_MAP_id_tag2el_2,
-	4,	/* Count of tags in the map */
+	5,	/* Count of tags in the map */
 	0,
 	-1	/* Extensions start */
 };
@@ -79,7 +89,7 @@ asn_TYPE_descriptor_t asn_DEF_id_2 = {
 	0,	/* No tags (count) */
 	0,	/* No PER visible constraints */
 	asn_MBR_id_2,
-	4,	/* Elements count */
+	5,	/* Elements count */
 	&asn_SPC_id_specs_2	/* Additional specs */
 };
 
