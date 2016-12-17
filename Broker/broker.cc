@@ -10,13 +10,12 @@
 using namespace std;
 
 broker::broker(){
+	nSubs = 5;
 	sub[0].insert_sub("1.12.3.4");
 	sub[1].insert_sub("1.12.3.5");
 	sub[2].insert_sub("1.10.3.4");
 	sub[3].insert_sub("1.10.3.5");
 	sub[4].insert_sub("1.11.3.4");
-
-	nSubs = 5;
 }
 
 broker::~broker(){}
@@ -180,7 +179,7 @@ void broker::connection(TCPServerSocket * server){
 					cout << "Estrutura de dados obtida da decodificação DER:" << endl;
 					other->show();
 				}
-				delete other;
+			//	delete other;
 
 			  }
 

@@ -8,6 +8,8 @@
 #ifndef PART_H_
 #define PART_H_
 #include "TCPBaseSocket.h"
+#include "subjects.h"
+
 class part{
 	public:
 		part();
@@ -16,13 +18,13 @@ class part{
 		void unsubscribe();
 		void publish();
 		void init();
-		void receive();
 		void notify();
-		void report();
 	private:
 		bool state;
 		string oid;
 		TCPClientSocket c;
+		subjects sub[5];
+		int nSubs;
 };
 
 

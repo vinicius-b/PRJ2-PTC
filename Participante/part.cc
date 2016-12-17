@@ -13,16 +13,15 @@ part::part(){
 	state = false;
 	oid = "1.12.3.4";
 	c.connect("localhost", 8000);
+	sub[0].insert_sub("1.12.3.4");
+	sub[1].insert_sub("1.12.3.5");
+	sub[2].insert_sub("1.10.3.4");
+	sub[3].insert_sub("1.10.3.5");
+	sub[4].insert_sub("1.11.3.4");
+	nSubs = 5;
 }
 
 part::~part(){
-
-}
-void part::report(){
-
-}
-
-void part::receive(){
 
 }
 
@@ -60,13 +59,26 @@ void part::publish(){
 			string ip = noty.get_ip();
 			bool val = noty.get_value();
 			cout << "Notify recebido" << endl;
+			if(val == 0){
+			cout << "---------------" << endl;
 			cout << "Sensor publicador: " << ip << endl;
-			cout << "Valor do sensor: " << val << endl;
+			cout << "Sensor desligado"<<endl;
+			cout << "---------------" << endl;
+			} else{
+				cout << "---------------" << endl;
+			cout << "Sensor publicador: " << ip << endl;
+			cout << "Sensor ligado"<<endl;
+			cout << "---------------" << endl;
+			}
+		//	delete other;
 		}catch(TCPServerSocket::DisconnectedException e){
 			cout << e.what() << ": " << e.get_addr() << ':';
 			cout << e.get_port()<< endl;
 		}
-		return;
+
+
+
+	return;
 	}
 }
 void part::subscribe(string subject){
@@ -112,6 +124,8 @@ void part::init(){;
 	cout << "Digite 1 para subscribe" << endl;
 	cout << "Digite 2 para publish" << endl;
 	cout << "Digite 3 para unsubscribe" << endl;
+	cout << "Digite 4 para mudar de estado" << endl;
+	cout << "Digite 5 para mudar de assunto" << endl;
 	cout << "Escolha operação: ";
 	cin >> op;
 	if (op == 1)
@@ -120,6 +134,19 @@ void part::init(){;
 		publish();
 	if (op == 3)
 		unsubscribe();
+	if(op == 4){
+		bool val;
+		cout << "Digite 0 para desligado e 1 para ligado" << endl;
+		cin >> val;
+		state = val;
+	}
+	if(op == 5){
+		string s;
+		cout << "Digite novo assunto: ";
+		cin >> s;
+		oid = s;
+		cout << endl;
+	}
 }
 int main() {
 	part p;

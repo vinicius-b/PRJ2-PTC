@@ -22,8 +22,8 @@ class broker{
 		void ack_subs(string subj, string addr, Connection * c, int port);
 		void publish(string subj, string addr, bool val, Connection * c, int port);
 	private:
-		subjects sub[5];
 		int nSubs;
+		subjects sub[5];
 };
 
 
