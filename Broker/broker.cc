@@ -20,14 +20,18 @@ broker::broker(){
 
 broker::~broker(){}
 
-void broker::ack_subs(string subj, string addr, Connection * c, int port){
+void broker::ack_subs(string subj, string addr, Connection * c, int port, bool state){
 	TAtivo pkt;
 	string conteudo;
 	TAtivo::Choice_id & id = pkt.get_id();
 	TACKsubs ack = id.get_ack();
 	pkt.set_cod(5);
 	ack.set_subject(subj);
-	ack.set_value("Permissão negada.");
+	if(state == true)
+		ack.set_value("Permissão negada");
+	else
+		ack.set_value("Pedido efetuado");
+
 	pkt.check_constraints();
 
 	cout << "Estrutura de dados em memória (antes de codificação DER):" << endl;
@@ -80,9 +84,9 @@ void broker::insert_list(string oid, string addr, int port, Connection * con){
 	for (i; i < nSubs ; i++){
 		if(sub[i].return_sub() == oid){
 			cout << "Participante cadastrado" << endl;
-			sub[i].IP.insert(sub[i].IP.end(),addr);
-			sub[i].port.insert(sub[i].port.end(),port);
-			sub[i].c.insert(sub[i].c.end(),con);
+			sub[i].IP.push_back(addr);
+			sub[i].port.push_back(port);
+			sub[i].c.push_back(con);
 			return;
 		}
 	}
@@ -96,18 +100,22 @@ void broker::publish(string subj, string addr, bool val, Connection * c, int por
 	for(i; i < nSubs; i++){
 		if(sub[i].return_sub() == subj){
 			int ip_len = sub[i].IP.size();
+			cout << "Tamanho da lista de IP: " << ip_len << endl;
 			for(int j = 0; j < ip_len; j++){
 				if (sub[i].IP[j] == addr){
 					ip_found = true;
+					ack_subs(subj,addr,c,port, false);
 					break;
 				}
 			}
 			if(ip_found == true){
 				for(int j = 0; j < ip_len; j++){
-					notify(sub[i].IP[j], val, subj, sub[i].port[j], sub[i].c[j]);
+					if(sub[i].IP[j] != addr){
+						notify(sub[i].IP[j], val, subj, sub[i].port[j], sub[i].c[j]);
+					}
 				}
 			}else{
-				ack_subs(subj, addr, c, port);
+				ack_subs(subj, addr, c, port, true);
 				return;
 			}
 

@@ -54,22 +54,30 @@ void part::publish(){
 			inp.write(data.c_str(), data.size());
 			TAtivo * other = decoder.deserialize();
 			TAtivo::Choice_id & id = other->get_id();
-			TNotify noty = id.get_noty();
-			string subject = noty.get_subject();
-			string ip = noty.get_ip();
-			bool val = noty.get_value();
-			cout << "Notify recebido" << endl;
-			if(val == 0){
-			cout << "---------------" << endl;
-			cout << "Sensor publicador: " << ip << endl;
-			cout << "Sensor desligado"<<endl;
-			cout << "---------------" << endl;
-			} else{
+			if(other->get_cod() == 4){
+				TNotify noty = id.get_noty();
+				string subject = noty.get_subject();
+				string ip = noty.get_ip();
+				bool val = noty.get_value();
+				cout << "Notify recebido" << endl;
+				if(val == 0){
 				cout << "---------------" << endl;
-			cout << "Sensor publicador: " << ip << endl;
-			cout << "Sensor ligado"<<endl;
-			cout << "---------------" << endl;
-			}
+				cout << "Sensor publicador: " << ip << endl;
+				cout << "Sensor desligado"<<endl;
+				cout << "---------------" << endl;
+				} else{
+					cout << "---------------" << endl;
+				cout << "Sensor publicador: " << ip << endl;
+				cout << "Sensor ligado"<<endl;
+				cout << "---------------" << endl;
+				}
+
+			}else if(other->get_cod() == 5){
+					cout << "oi" << endl;
+				}
+
+
+
 		//	delete other;
 		}catch(TCPServerSocket::DisconnectedException e){
 			cout << e.what() << ": " << e.get_addr() << ':';

@@ -19,7 +19,7 @@ class broker{
 		void insert_list(string oid, string addr, int port, Connection * con);
 		void remove(string oid, string addr, int port, Connection * con);
 		void notify(string ip, bool state, string subj, int port, Connection * sock);
-		void ack_subs(string subj, string addr, Connection * c, int port);
+		void ack_subs(string subj, string addr, Connection * c, int port, bool state);
 		void publish(string subj, string addr, bool val, Connection * c, int port);
 	private:
 		int nSubs;
