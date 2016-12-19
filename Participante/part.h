@@ -19,6 +19,8 @@ class part{
 		void publish();
 		void init();
 		void notify();
+		void receive();
+		bool inputAvailable();
 	private:
 		bool state;
 		string oid;

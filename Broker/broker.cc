@@ -10,12 +10,8 @@
 using namespace std;
 
 broker::broker(){
-	nSubs = 5;
-	sub[0].insert_sub("1.12.3.4");
-	sub[1].insert_sub("1.12.3.5");
-	sub[2].insert_sub("1.10.3.4");
-	sub[3].insert_sub("1.10.3.5");
-	sub[4].insert_sub("1.11.3.4");
+	nSubs = 0;
+	sock_ant = 0;
 }
 
 broker::~broker(){}
@@ -81,7 +77,21 @@ void broker::notify(string ip, bool state, string subj, int port, Connection * s
 
 void broker::insert_list(string oid, string addr, int port, Connection * con){
 	int i = 0;
-	for (i; i < nSubs ; i++){
+	bool test_sub = false;
+	cout << nSubs << " insert list 1"<< endl;
+	for (i = 0; i <= nSubs ; i++){
+		cout << nSubs << " insert list 2"<< endl;
+		if(sub[i].return_sub() == oid){
+			test_sub = true;
+			break;
+		}
+	}
+	if(!test_sub){
+		sub[nSubs].insert_sub(oid);
+		nSubs++;
+		cout << nSubs << " insert list 3"<< endl;
+	}
+	for (i = 0; i < nSubs ; i++){
 		if(sub[i].return_sub() == oid){
 			cout << "Participante cadastrado" << endl;
 			sub[i].IP.push_back(addr);
@@ -90,14 +100,13 @@ void broker::insert_list(string oid, string addr, int port, Connection * con){
 			return;
 		}
 	}
-	cout << "Assunto inválido" << endl;
 	return;
 }
 
 void broker::publish(string subj, string addr, bool val, Connection * c, int port){
 	int i = 0;
 	bool ip_found = false;
-	for(i; i < nSubs; i++){
+	for(i = 0; i < nSubs; i++){
 		if(sub[i].return_sub() == subj){
 			int ip_len = sub[i].IP.size();
 			cout << "Tamanho da lista de IP: " << ip_len << endl;
@@ -123,14 +132,28 @@ void broker::publish(string subj, string addr, bool val, Connection * c, int por
 	}
 	return;
 }
+
+//vector<string> broker::split(const string &s, char delim) {
+//	vector<string> elems;
+//    stringstream ss;
+//    ss.str(s);
+//    string item;
+//    while (getline(ss, item, delim)) {
+//        elems.push_back(item);
+//    }
+//    return elems;
+//}
+
 void broker::remove(string oid, string addr, int port, Connection * con){
 	int i = 0;
-		for (i; i < nSubs ; i++){
+		for (i = 0; i < nSubs ; i++){
 			if(sub[i].return_sub() == oid){
 				int ip_len = sub[i].IP.size();
 				for(int j = 0; j < ip_len; j++){
 					if(sub[i].IP[j] == addr){
-						sub[i].IP[j].erase(sub[i].IP[j].begin()+j);
+						sub[i].IP.erase(sub[i].IP.begin()+j);
+						sub[i].port.erase(sub[i].port.begin()+j);
+						sub[i].c.erase(sub[i].c.begin()+j);
 					}
 				}
 			}
@@ -138,6 +161,24 @@ void broker::remove(string oid, string addr, int port, Connection * con){
 	return;
 }
 
+void broker::remove_from_connection(string addr){
+	int i = 0;
+//	cout << "Remove from connection" << endl;
+	for (i = 0; i < nSubs ; i++){
+		int ip_len = sub[i].IP.size();
+
+		for(int j = 0; j < ip_len; j++){
+
+			if(sub[i].IP[j] == addr){
+				sub[i].IP.erase(sub[i].IP.begin()+j);
+				sub[i].port.erase(sub[i].port.begin()+j);
+				sub[i].c.erase(sub[i].c.begin()+j);
+			}
+		}
+	}
+	cout << "Participante removido" << endl;
+	return;
+}
 
 
 void broker::connection(TCPServerSocket * server){
@@ -145,6 +186,7 @@ void broker::connection(TCPServerSocket * server){
 	TAtivo::DerDeserializer decoder(inp);
 	while(true){
 		try {
+		//	cout << "try" << endl;
 			Connection & sock = server->wait(0);
 			string addr;
 			unsigned short port;
@@ -187,59 +229,68 @@ void broker::connection(TCPServerSocket * server){
 					cout << "Estrutura de dados obtida da decodificação DER:" << endl;
 					other->show();
 				}
-			//	delete other;
+				delete other;
 
 			  }
 
 			}
+			if(!sock.isConnected()) {
+				cout << "is conected" << endl;
+				remove_from_connection(addr);
+			}
 
 		} catch (TCPServerSocket::DisconnectedException e) {
+			remove_from_connection(e.get_addr());
 			cout << e.what() << ": " << e.get_addr() << ':';
 			cout << e.get_port()<< endl;
+
 		}
-		return;
+
+		//return;
 	}
 }
 
-
+void broker::change_descrip(){
+	sock_ant = 0;
+}
 int main(int argc, char** argv) {
 	TCPServerSocket server(8000);
 	broker b;
-
-	int sock_fd = server.get_descriptor();
-	int sock_ant = 0;
-
-	int desc_maior = sock_fd;
-
-	while(1){
-		fd_set r;
-		FD_ZERO(&r);
-		FD_SET(sock_fd, &r);
-		FD_SET(sock_ant, &r);
-		int  i = 0;
-
-		if(!(i = select(desc_maior+1,&r,0,0,0)) == 0){
-			cout << "Há " << i << " descritores prontos" << endl;
-			if(i < 0){
-				perror("select()");
-			}else if(i){
-				if(FD_ISSET(sock_fd, &r)){
-					cout << "New connection" << endl;
-					Connection & s = server.wait(0);
-					sock_ant  = s.get_descriptor();
-					if(sock_ant > sock_fd){
-						desc_maior = sock_ant;
-					}else{
-						desc_maior = sock_fd;
-					}
-					b.connection(&server);
-				}if(FD_ISSET(sock_ant, &r)){
-					cout << "Old connection" << endl;
-					Connection & s = server.wait(0);
-					b.connection(&server);
-				}
-			}
-		}
-	}
+	b.connection(&server);
+//	int sock_fd = server.get_descriptor();
+//	//b.sock_ant = 0;
+//
+//	int desc_maior = sock_fd;
+//
+//	while(1){
+//		fd_set r;
+//		FD_ZERO(&r);
+//		FD_SET(sock_fd, &r);
+//		FD_SET(b.sock_ant, &r);
+//		int  i = 0;
+//
+//		if(!(i = select(desc_maior+1,&r,0,0,0)) == 0){
+//			cout << "Há " << i << " descritores prontos" << endl;
+//			if(i < 0){
+//				perror("select()");
+//			}else if(i){
+//				if(FD_ISSET(sock_fd, &r)){
+//					cout << "New connection" << endl;
+//					Connection & s = server.wait(0);
+//					b.sock_ant  = s.get_descriptor();
+//					if(b.sock_ant > sock_fd){
+//						desc_maior = b.sock_ant;
+//					}else{
+//						desc_maior = sock_fd;
+//					}
+//					b.connection(&server);
+//				}else if(FD_ISSET(b.sock_ant, &r)){
+//					cout << "Old connection" << endl;
+//					Connection & s = server.wait(0);
+//					b.connection(&server);
+//				}
+//			}
+//		}
+//	}
     return 0;
 }
