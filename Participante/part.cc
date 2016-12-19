@@ -35,22 +35,26 @@ void part::receive(){
 			FD_SET(sock_fd, &r);
 			FD_SET(sock_aux, &r);
 			int  i = 0;
-			cout << "receive" << endl;
+			cout << "--------------------" << endl;
+			cout << "Verificando dados a serem recebidos..." << endl;
+			cout << "--------------------" << endl;
 			timeval tv = {1,0};
 			if(!(i = select(sock_fd+1,&r,0,0,&tv)) == 0){
-				cout << "Há " << i << " descritores prontos" << endl;
+				//cout << "Há " << i << " descritores prontos" << endl;
 				if(i < 0){
 					perror("select()");
 				}else if(i){
 					if(FD_ISSET(sock_aux, &r)){
-						cout << "Old connection" << endl;
+					//	cout << "Old connection" << endl;
 						return;
 					}
 					if(FD_ISSET(sock_fd, &r)){
-						cout << "Mensagem recebida" << endl;
+						cout << "Mensagem recebida!" << endl;
 						try{
 							string data;
+
 							data = c.recv(1024);
+
 							stringstream inp;
 							TAtivo::DerDeserializer decoder(inp);
 							inp.write(data.c_str(), data.size());
@@ -75,12 +79,23 @@ void part::receive(){
 								}
 
 							}else if(other->get_cod() == 5){
-									cout << "Ack Subs" << endl;
+								TACKsubs ack = id.get_ack();
+								bool val = ack.get_value();
+								if(val){
+									cout << "-------------------------" << endl;
+									cout << "Publish enviado aos assinantes" << endl;
+									cout << "-------------------------" << endl;
 								}
+								else{
+									cout << "-------------------------" << endl;
+									cout << "Permissão negada, você não assina este assunto" << endl;
+									cout << "-------------------------" << endl;
+								}
+ 								}
 
 
 
-						//	delete other;
+							delete other;
 						}catch(TCPServerSocket::DisconnectedException e){
 							cout << e.what() << ": " << e.get_addr() << ':';
 							cout << e.get_port()<< endl;
@@ -167,7 +182,7 @@ void part::init(){;
 	int op;
 	size_t const BufferSize = 10;
 	char buffer[BufferSize];
-	//receive();
+	receive();
 	cout << "Digite 1 para subscribe" << endl;
 	cout << "Digite 2 para publish" << endl;
 	cout << "Digite 3 para unsubscribe" << endl;

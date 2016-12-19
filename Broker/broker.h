@@ -22,8 +22,6 @@ class broker{
 		void ack_subs(string subj, string addr, Connection * c, int port, bool state);
 		void publish(string subj, string addr, bool val, Connection * c, int port);
 		void remove_from_connection(string addr);
-		void change_descrip();
-		int sock_ant;
 		//vector<string> split(const string &s, char delim);
 	private:
 		int nSubs;

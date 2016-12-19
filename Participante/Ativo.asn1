@@ -22,7 +22,7 @@ Notify ::= SEQUENCE {
 
 ACKsubs ::= SEQUENCE {
 	subject OBJECT IDENTIFIER,
-	value PrintableString(SIZE(1..256))
+	value BOOLEAN
 }
 
 Ativo ::= SEQUENCE {

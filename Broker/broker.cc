@@ -11,7 +11,6 @@ using namespace std;
 
 broker::broker(){
 	nSubs = 0;
-	sock_ant = 0;
 }
 
 broker::~broker(){}
@@ -24,12 +23,11 @@ void broker::ack_subs(string subj, string addr, Connection * c, int port, bool s
 	pkt.set_cod(5);
 	ack.set_subject(subj);
 	if(state == true)
-		ack.set_value("Permissão negada");
+		ack.set_value(false);
 	else
-		ack.set_value("Pedido efetuado");
+		ack.set_value(true);
 
 	pkt.check_constraints();
-
 	cout << "Estrutura de dados em memória (antes de codificação DER):" << endl;
 	pkt.show();
 
@@ -163,7 +161,6 @@ void broker::remove(string oid, string addr, int port, Connection * con){
 
 void broker::remove_from_connection(string addr){
 	int i = 0;
-//	cout << "Remove from connection" << endl;
 	for (i = 0; i < nSubs ; i++){
 		int ip_len = sub[i].IP.size();
 
@@ -182,11 +179,12 @@ void broker::remove_from_connection(string addr){
 
 
 void broker::connection(TCPServerSocket * server){
-	stringstream inp;
-	TAtivo::DerDeserializer decoder(inp);
+
 	while(true){
 		try {
 		//	cout << "try" << endl;
+			stringstream inp;
+			TAtivo::DerDeserializer decoder(inp);
 			Connection & sock = server->wait(0);
 			string addr;
 			unsigned short port;
@@ -229,14 +227,10 @@ void broker::connection(TCPServerSocket * server){
 					cout << "Estrutura de dados obtida da decodificação DER:" << endl;
 					other->show();
 				}
-				delete other;
+				//delete other;
 
 			  }
 
-			}
-			if(!sock.isConnected()) {
-				cout << "is conected" << endl;
-				remove_from_connection(addr);
 			}
 
 		} catch (TCPServerSocket::DisconnectedException e) {
@@ -250,9 +244,6 @@ void broker::connection(TCPServerSocket * server){
 	}
 }
 
-void broker::change_descrip(){
-	sock_ant = 0;
-}
 int main(int argc, char** argv) {
 	TCPServerSocket server(8000);
 	broker b;

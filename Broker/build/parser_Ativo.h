@@ -297,7 +297,6 @@ class TUnsubscribe : public ASN1DataType<Unsubscribe_t> {
 class TACKsubs : public ASN1DataType<ACKsubs_t> {
  public:
  private:
-  ASN1String * m_value;
   ASN1Oid * m_subject;
  public:
   TACKsubs() : ASN1DataType<ACKsubs_t>(&asn_DEF_ACKsubs) {
@@ -312,25 +311,22 @@ class TACKsubs : public ASN1DataType<ACKsubs_t> {
     destroy = false;
   }
   void init() {
-    m_value = new ASN1String(pkt->value);
     m_subject = new ASN1Oid(pkt->subject);
   }
   virtual ~TACKsubs() {
-    delete m_value;
     delete m_subject;
   }
   TACKsubs & operator=(const TACKsubs & o) {
     if (destroy) delete pkt;
     pkt = o.pkt;
     DESC = o.DESC;
-    delete m_value;
     delete m_subject;
     init();
     destroy = false;
     return *this;
 }
-  string get_value() { return m_value->str();}
-  void set_value(const string & arg) { *m_value = arg;}
+  bool get_value() { return pkt->value;}
+  void set_value(bool arg) { pkt->value = arg;}
   ASN1Oid & get_subject_attr() { return *m_subject;}
   string get_subject() { return m_subject->str();}
   void set_subject(const string & arg) { *m_subject = arg;}
