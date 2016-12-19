@@ -76,9 +76,7 @@ void broker::notify(string ip, bool state, string subj, int port, Connection * s
 void broker::insert_list(string oid, string addr, int port, Connection * con){
 	int i = 0;
 	bool test_sub = false;
-	cout << nSubs << " insert list 1"<< endl;
 	for (i = 0; i <= nSubs ; i++){
-		cout << nSubs << " insert list 2"<< endl;
 		if(sub[i].return_sub() == oid){
 			test_sub = true;
 			break;
@@ -87,7 +85,6 @@ void broker::insert_list(string oid, string addr, int port, Connection * con){
 	if(!test_sub){
 		sub[nSubs].insert_sub(oid);
 		nSubs++;
-		cout << nSubs << " insert list 3"<< endl;
 	}
 	for (i = 0; i < nSubs ; i++){
 		if(sub[i].return_sub() == oid){
@@ -107,7 +104,6 @@ void broker::publish(string subj, string addr, bool val, Connection * c, int por
 	for(i = 0; i < nSubs; i++){
 		if(sub[i].return_sub() == subj){
 			int ip_len = sub[i].IP.size();
-			cout << "Tamanho da lista de IP: " << ip_len << endl;
 			for(int j = 0; j < ip_len; j++){
 				if (sub[i].IP[j] == addr){
 					ip_found = true;
@@ -118,7 +114,7 @@ void broker::publish(string subj, string addr, bool val, Connection * c, int por
 			if(ip_found == true){
 				for(int j = 0; j < ip_len; j++){
 					if(sub[i].IP[j] != addr){
-						notify(sub[i].IP[j], val, subj, sub[i].port[j], sub[i].c[j]);
+						notify(addr, val, subj, sub[i].port[j], sub[i].c[j]);
 					}
 				}
 			}else{
@@ -130,17 +126,6 @@ void broker::publish(string subj, string addr, bool val, Connection * c, int por
 	}
 	return;
 }
-
-//vector<string> broker::split(const string &s, char delim) {
-//	vector<string> elems;
-//    stringstream ss;
-//    ss.str(s);
-//    string item;
-//    while (getline(ss, item, delim)) {
-//        elems.push_back(item);
-//    }
-//    return elems;
-//}
 
 void broker::remove(string oid, string addr, int port, Connection * con){
 	int i = 0;
@@ -182,7 +167,6 @@ void broker::connection(TCPServerSocket * server){
 
 	while(true){
 		try {
-		//	cout << "try" << endl;
 			stringstream inp;
 			TAtivo::DerDeserializer decoder(inp);
 			Connection & sock = server->wait(0);
@@ -248,40 +232,5 @@ int main(int argc, char** argv) {
 	TCPServerSocket server(8000);
 	broker b;
 	b.connection(&server);
-//	int sock_fd = server.get_descriptor();
-//	//b.sock_ant = 0;
-//
-//	int desc_maior = sock_fd;
-//
-//	while(1){
-//		fd_set r;
-//		FD_ZERO(&r);
-//		FD_SET(sock_fd, &r);
-//		FD_SET(b.sock_ant, &r);
-//		int  i = 0;
-//
-//		if(!(i = select(desc_maior+1,&r,0,0,0)) == 0){
-//			cout << "Há " << i << " descritores prontos" << endl;
-//			if(i < 0){
-//				perror("select()");
-//			}else if(i){
-//				if(FD_ISSET(sock_fd, &r)){
-//					cout << "New connection" << endl;
-//					Connection & s = server.wait(0);
-//					b.sock_ant  = s.get_descriptor();
-//					if(b.sock_ant > sock_fd){
-//						desc_maior = b.sock_ant;
-//					}else{
-//						desc_maior = sock_fd;
-//					}
-//					b.connection(&server);
-//				}else if(FD_ISSET(b.sock_ant, &r)){
-//					cout << "Old connection" << endl;
-//					Connection & s = server.wait(0);
-//					b.connection(&server);
-//				}
-//			}
-//		}
-//	}
     return 0;
 }
